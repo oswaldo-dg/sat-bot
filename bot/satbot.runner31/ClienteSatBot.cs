@@ -26,6 +26,7 @@ namespace satbot.runner31
 
         public async Task Procesar()
         {
+            Console.WriteLine("Starting");
             Poller p = new Poller(new ServicioDemoRFC());
             p.HandlerNotificacion += P_HandlerNotificacion1;
             p.HandlerProcesamiento += P_HandlerProcesamiento1;
@@ -34,11 +35,13 @@ namespace satbot.runner31
 
         private void P_HandlerProcesamiento1(object sender, satbot.common.eventos.Procesamiento e)
         {
+            Console.WriteLine(e.ToString());
             Log(e.ToString());
         }
 
         private void P_HandlerNotificacion1(object sender, satbot.common.eventos.Notificacion e)
         {
+            Console.WriteLine(e.ToString());
             Log(e.ToString());
         }
 

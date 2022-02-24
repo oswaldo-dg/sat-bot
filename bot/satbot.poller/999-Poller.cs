@@ -34,7 +34,7 @@ namespace satbot.poller
 
         public async Task Iniciar(string RFC, string PathPFX, string Password)
         {
-            
+            Console.WriteLine("Iniciando");
             this.RFC = RFC.ToUpper();
             this.PathPFX = PathPFX;
             this.Password = Password;
@@ -43,31 +43,40 @@ namespace satbot.poller
             OnProcesamiento( EstadoProcesamiento.Inicio.ArgProcesamiento());
             OnNotificacion($"Iniciando proceso para {RFC}".ArgNotificacion("Iniciar"));
 
+            Console.WriteLine("---------------");
             var (OK, Location, Error) = LLamadaInicial();
             if (OK)
             {
+                Console.WriteLine($"--------------- {Location}");
                 if (!string.IsNullOrEmpty(Location))
                 {
                     var (OKri, Errorri) = RedirectInicial(Location);
                     if (OKri)
                     {
+                        Console.WriteLine($"--------------- Captcha");
                         var (OKCaptcha, ErrorCaptcha) = FormaLoginCaptcha(Location);
                         if (OKCaptcha)
                         {
+                            Console.WriteLine($"--------------- LoginFirma");
                             var (OKFirma, UUIDFirma,  ErrorFirma) = FormaLoginFirma();
                             if (OKFirma)
                             {
 
+                                Console.WriteLine($"--------------- Firma");
                                 string token = FirmaAcceso(UUIDFirma);
+                                Console.WriteLine($"--------------- Login");
                                 var (OKIntentoLogin, WResult, ErrorIntentoLogin) = IntentoLogin(token, UUIDFirma);
                                 if (OKIntentoLogin)
                                 {
+                                    Console.WriteLine($"--------------- Login valido");
                                     var(OKLogin, ErrLogin) = LoginValido(WResult);
                                     if (OKLogin)
                                     {
+                                        Console.WriteLine($"--------------- PAgina inicial");
                                         var (OKPinicial, ErrPinicial) = PaginaInicial();
                                         if (OKPinicial)
                                         {
+                                            Console.WriteLine($"--------------- Encuesta");
                                             encuesta = await servicioRFC.ObtieneEncuesta();
                                             if (encuesta != null)
                                             {
