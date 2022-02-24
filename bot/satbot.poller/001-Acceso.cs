@@ -15,37 +15,6 @@ namespace satbot.poller
 {
     public partial class Poller
     {
-        private (bool OK, string Error) PaginaInicial()
-        {
-            string URL = "https://portalcfdi.facturaelectronica.sat.gob.mx/";
-            string error = null;
-            bool ok = false;
-            try
-            {
-
-                HttpWebRequest rq = BrowserRequest(URL);
-
-                var r = (HttpWebResponse)rq.GetResponse();
-                if (r.StatusCode == HttpStatusCode.Found)
-                {
-                    RegenerarCookies(mycookies);
-                    ok = true;
-                }
-                else
-                {
-                    error = $"PaginaInicial Respuesta incorrecta {r.StatusCode}";
-                }
-            }
-            catch (Exception ex)
-            {
-                error = $"PaginaInicial error {ex}";
-            }
-
-            return (ok, error);
-
-
-        }
-
 
         private (bool OK, string Error) LoginValido(string wresult)
         {
@@ -83,6 +52,20 @@ namespace satbot.poller
                 {
                     error = $"LoginValido Respuesta incorrecta {r.StatusCode}";
                 }
+            }
+            catch (WebException ex)
+            {
+                var response = (HttpWebResponse)ex.Response;
+                if (response.StatusCode == HttpStatusCode.Found)
+                {
+                    RegenerarCookies(mycookies);
+                    ok = true;
+                }
+                else
+                {
+                    error = $"LoginValido error {ex}";
+                }
+
             }
             catch (Exception ex)
             {
@@ -270,12 +253,13 @@ namespace satbot.poller
             string error = null;
             string location = null;
             bool ok = false;
+            HttpWebResponse r = null;
             try
             {
 
                 HttpWebRequest rq = BrowserRequest(URL);
 
-                var r = (HttpWebResponse)rq.GetResponse();
+                r = (HttpWebResponse)rq.GetResponse();
                 if (r.StatusCode == HttpStatusCode.Redirect)
                 {
                     location = r.Headers[HttpResponseHeader.Location];
@@ -287,7 +271,22 @@ namespace satbot.poller
                     error = $"LLamadaInicial Respuesta incorrecta {r.StatusCode}";
                 }
             }
-            catch (Exception ex)
+            catch (WebException ex)
+            {
+                var response = (HttpWebResponse)ex.Response;
+
+                if(response.StatusCode== HttpStatusCode.Found)
+                {
+                    location = response.Headers[HttpResponseHeader.Location];
+                    RegenerarCookies(mycookies);
+                    ok = true;
+
+                } else
+                {
+                    error = $"LLamadaInicial error {ex}";
+                }
+                
+            }catch (Exception ex)
             {
                 error = $"LLamadaInicial error {ex}";
             }
@@ -318,6 +317,20 @@ namespace satbot.poller
                     error = $"LLamadaInicial Respuesta incorrecta {r.StatusCode}";
                 }
             }
+            catch (WebException ex)
+            {
+                var response = (HttpWebResponse)ex.Response;
+                if (response.StatusCode == HttpStatusCode.Found)
+                {
+                    location = response.Headers[HttpResponseHeader.Location];
+                    ok = true;
+                }
+                else
+                {
+                    error = $"LLamadaInicial error {ex}";
+                }
+
+            }
             catch (Exception ex)
             {
                 error = $"LLamadaInicial error {ex}";
@@ -327,5 +340,52 @@ namespace satbot.poller
 
 
         }
+
+        private (bool OK, string Error) PaginaInicial()
+        {
+            string URL = "https://portalcfdi.facturaelectronica.sat.gob.mx/";
+            string error = null;
+            bool ok = false;
+            try
+            {
+
+                HttpWebRequest rq = BrowserRequest(URL);
+                var r = rq.GetResponse();
+                if ((HttpWebResponse)r.StatusCode == HttpStatusCode.Found)
+                {
+                    RegenerarCookies(mycookies);
+                    ok = true;
+                }
+                else
+                {
+                    error = $"PaginaInicial Respuesta incorrecta {r.StatusCode}";
+                }
+
+            }
+            catch (WebException ex)
+            {
+                var response = (HttpWebResponse)ex.Response;
+
+                if (response.StatusCode == HttpStatusCode.Found)
+                {
+                    RegenerarCookies(mycookies);
+                    ok = true;
+
+                }
+                else
+                {
+                    error = $"PaginaInicial error {ex}";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                error = $"PaginaInicial error {ex}";
+            }
+
+            return (ok, error);
+
+        }
+
     }
 }
