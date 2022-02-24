@@ -1,0 +1,12 @@
+﻿@page
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@model setbot_webui.Areas.Consulta.Pages.CFDI.ConsultaCFDIModel
+@{
+    ViewData["Title"] = "Consulta CFDI";
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <h3>Consulta CFDI</h3>
+}
