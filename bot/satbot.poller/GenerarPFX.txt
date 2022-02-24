@@ -1,0 +1,7 @@
+﻿Del sat convertir la clave privada a PEM
+
+	openssl rsa -in localPrivateKeyfile.key -text > privateKey.pem
+
+Generar el PFX con 
+	
+	openssl pkcs12 -export -out salida.pfx -inkey claveprivada.pem -in certificado.cer

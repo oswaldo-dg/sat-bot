@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "uAYVuwUre+GvDFwgd4C1vMZYcHSK1zRuanRKMQPGTWswqF7OnpvF4rPi9hWlQ8gyX6vxq4ajPriQKgq5oagl7A==",
+  "success": true,
+  "projectFilePath": "C:\\sat-bot\\bot\\satbot.poller\\satbot.poller.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\oswal\\.nuget\\packages\\htmlagilitypack\\1.11.42\\htmlagilitypack.1.11.42.nupkg.sha512"
+  ],
+  "logs": []
+}

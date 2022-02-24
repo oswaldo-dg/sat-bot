@@ -1,0 +1,12 @@
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\bin\Debug\net6.0\satbot-infrastructure.deps.json
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\bin\Debug\net6.0\satbot-infrastructure.dll
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\bin\Debug\net6.0\ref\satbot-infrastructure.dll
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\bin\Debug\net6.0\satbot-infrastructure.pdb
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\obj\Debug\net6.0\satbot-infrastructure.csproj.AssemblyReference.cache
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\obj\Debug\net6.0\satbot-infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\obj\Debug\net6.0\satbot-infrastructure.AssemblyInfoInputs.cache
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\obj\Debug\net6.0\satbot-infrastructure.AssemblyInfo.cs
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\obj\Debug\net6.0\satbot-infrastructure.csproj.CoreCompileInputs.cache
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\obj\Debug\net6.0\satbot-infrastructure.dll
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\obj\Debug\net6.0\ref\satbot-infrastructure.dll
+C:\sat-bot\webui\setbot-webui\satbot-infrastructure\obj\Debug\net6.0\satbot-infrastructure.pdb

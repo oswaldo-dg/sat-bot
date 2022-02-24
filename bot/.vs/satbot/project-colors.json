@@ -1,0 +1,26 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "8bae06f4-ad73-4588-9200-4fa3e8ced73e": {
+      "ProjectGuid": "8bae06f4-ad73-4588-9200-4fa3e8ced73e",
+      "DisplayName": "satbot.poller",
+      "ColorIndex": 0
+    },
+    "0a92d444-1d94-4168-9cc2-f43757f8d177": {
+      "ProjectGuid": "0a92d444-1d94-4168-9cc2-f43757f8d177",
+      "DisplayName": "satbot.runner",
+      "ColorIndex": 1
+    },
+    "3dfc04d8-001a-4768-bdea-1de2118b60eb": {
+      "ProjectGuid": "3dfc04d8-001a-4768-bdea-1de2118b60eb",
+      "DisplayName": "satbot.common",
+      "ColorIndex": 2
+    },
+    "6ebcfba3-ffda-4164-aa46-5ac22830c802": {
+      "ProjectGuid": "6ebcfba3-ffda-4164-aa46-5ac22830c802",
+      "DisplayName": "satbot-runner31",
+      "ColorIndex": 3
+    }
+  },
+  "NextColorIndex": 4
+}

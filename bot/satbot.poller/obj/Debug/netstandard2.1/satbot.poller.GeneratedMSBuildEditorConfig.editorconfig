@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = satbot.poller
+build_property.ProjectDir = C:\sat-bot\bot\satbot.poller\
