@@ -21,6 +21,27 @@ namespace satbot.poller
         private StringDictionary EstadoReceptor = null;
         private CookieContainer cookiesReceptor;
 
+        private void UpsertClaveEstado(string Key, string Valor) { 
+        
+            if(EstadoReceptor!=null)
+            {
+                EstadoReceptor = new StringDictionary();
+            }
+
+            if(EstadoReceptor.ContainsKey(Key))
+            {
+                EstadoReceptor.Remove(Key);
+            }
+            EstadoReceptor.Add(Key, Valor);
+        }
+
+        private void DebugEstadoReceptor() {
+            foreach (DictionaryEntry value in EstadoReceptor)
+            {
+                Console.WriteLine($"{value.Key} == {value.Value}");
+            }
+        }
+
         private (bool OK, string Error) PaginaInicialReceptor()
         {
             string URL = "https://portalcfdi.facturaelectronica.sat.gob.mx/ConsultaReceptor.aspx";
@@ -78,6 +99,11 @@ namespace satbot.poller
                 rq.ContentType = "application/x-www-form-urlencoded";
                 rq.ContentLength = postDataBytes.Length;
 
+                using (Stream stream = rq.GetRequestStream())
+                {
+                    stream.Write(postDataBytes, 0, postDataBytes.Length);
+                    stream.Close();
+                }
 
                 var r = (HttpWebResponse)rq.GetResponse();
                 if (r.StatusCode == HttpStatusCode.OK)
@@ -85,8 +111,12 @@ namespace satbot.poller
                     RegenerarCookies(cookiesReceptor);
                     StreamReader sreader = new StreamReader(r.GetResponseStream());
                     string body = sreader.ReadToEnd();
-                    EstadoReceptor = body.ObtieneEstadoReceptor();
-                    ok = true;
+                    string viewstate = body.ObtieneViewStateInicialReceptor();
+                    if(!string.IsNullOrEmpty(viewstate))
+                    {
+                        UpsertClaveEstado("__viewstate", viewstate);
+                        ok = true;
+                    }
                 }
                 else
                 {
@@ -111,6 +141,7 @@ namespace satbot.poller
             {
 
                 HttpWebRequest rq = BrowserRequest(URL, cookiesReceptor);
+                rq.Method = "POST";
                 rq.Referer = "https://portalcfdi.facturaelectronica.sat.gob.mx/ConsultaReceptor.aspx";
                 var r = (HttpWebResponse)rq.GetResponse();
                 if (r.StatusCode == HttpStatusCode.OK)
@@ -132,27 +163,31 @@ namespace satbot.poller
             var (Okinicial, ErrInicia) = PaginaInicialReceptor();
             if (Okinicial)
             {
+                DebugEstadoReceptor();
                 ObtieneUsuarioReceptor();
                 var (OkCambioRFecha, ErrorCambioRFecha) = CambiaAReceptorPorFecha();
-                if(OkCambioRFecha)
+                DebugEstadoReceptor();
+                if (OkCambioRFecha)
                 {
-                    DateTime actual = encuesta.FechaInicio;
-                    DateTime limiteConsulta = actual.AddMinutes(encuesta.IntervaloReceptor);
-                    while (actual <= encuesta.FechaFinal)
-                    {
+                    var (OkRXFecha, ErrorRXFecha) = ReceptorPorFecha(encuesta.FechaInicio, encuesta.FechaFinal);
 
-                        OnNotificacion($"Procesando Receptor {actual.ToString("dd/MM/yyyy HH:mm:ss")} - {limiteConsulta.ToString("dd/MM/yyyy HH:mm:ss")}".ArgNotificacion("ProcesaReceptor"));
-                        var (OkRXFecha, ErrorRXFecha) = ReceptorPorFecha(actual, limiteConsulta);
-                        if(OkRXFecha)
-                        {
-                            actual = limiteConsulta;
-                            limiteConsulta = actual.AddMinutes(encuesta.IntervaloReceptor);
-                            ObtieneUsuarioReceptor();
-                        } else
-                        {
-                            break;
-                        }
-                    }
+                    //DateTime actual = encuesta.FechaInicio;
+                    //DateTime limiteConsulta = actual.AddMinutes(encuesta.IntervaloReceptor);
+                    //while (actual <= encuesta.FechaFinal)
+                    //{
+
+                    //    OnNotificacion($"Procesando Receptor {actual.ToString("dd/MM/yyyy HH:mm:ss")} - {limiteConsulta.ToString("dd/MM/yyyy HH:mm:ss")}".ArgNotificacion("ProcesaReceptor"));
+                    //    var (OkRXFecha, ErrorRXFecha) = ReceptorPorFecha(actual, limiteConsulta);
+                    //    if(OkRXFecha)
+                    //    {
+                    //        actual = limiteConsulta;
+                    //        limiteConsulta = actual.AddMinutes(encuesta.IntervaloReceptor);
+                    //        ObtieneUsuarioReceptor();
+                    //    } else
+                    //    {
+                    //        break;
+                    //    }
+                    //}
                 } else
                 {
                     OnNotificacion($"No fue posible seleccionar la búsqueda por fecha en la página del receptor {ErrorCambioRFecha}".ArgNotificacion("ProcesaReceptor", TipoNotificacion.Error));
@@ -241,6 +276,11 @@ namespace satbot.poller
                 rq.ContentType = "application/x-www-form-urlencoded";
                 rq.ContentLength = postDataBytes.Length;
 
+                using (Stream stream = rq.GetRequestStream())
+                {
+                    stream.Write(postDataBytes, 0, postDataBytes.Length);
+                    stream.Close();
+                }
 
                 var r = (HttpWebResponse)rq.GetResponse();
                 if (r.StatusCode == HttpStatusCode.OK)

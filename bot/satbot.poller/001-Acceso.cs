@@ -26,7 +26,7 @@ namespace satbot.poller
                 HttpWebRequest rq = BrowserRequest(URL);
 
                 var r = (HttpWebResponse)rq.GetResponse();
-                if (r.StatusCode == HttpStatusCode.Found)
+                if (r.StatusCode == HttpStatusCode.OK)
                 {
                     RegenerarCookies(mycookies);
                     ok = true;
@@ -38,16 +38,7 @@ namespace satbot.poller
             }
             catch (WebException ex)
             {
-                var response = (HttpWebResponse)ex.Response;
-                if (response.StatusCode == HttpStatusCode.Found)
-                {
-                    RegenerarCookies(mycookies);
-                    ok = true;
-                }
-                else
-                {
-                    error = $"PaginaInicial error {ex}";
-                }
+               error = $"PaginaInicial error {ex}";
 
             }
             catch (Exception ex)
@@ -74,7 +65,9 @@ namespace satbot.poller
                 rq.Method = "POST";
 
                 valoresPost valores = new valoresPost();
-
+                valores.addPar("wa", "wsignin1.0");
+                valores.addPar("wresult", wresult);
+                valores.addPar("wctx", "rm=0&id=passive&ru=%2f");
 
                 ASCIIEncoding encoding = new ASCIIEncoding();
                 byte[] postDataBytes = encoding.GetBytes(valores.obtienePostString());

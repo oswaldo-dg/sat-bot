@@ -24,6 +24,12 @@ namespace satbot.poller
         public int HttpBasicTimeout { get; set; }
         private readonly IServicioRFC servicioRFC;
         private EncuestaRFC encuesta;
+        private  int Ano;
+        private  int Mes;
+        private  int Dia;
+
+       
+
         public Poller(IServicioRFC servicioRFC)
         {
             // Dos minutos
@@ -32,12 +38,15 @@ namespace satbot.poller
         }
 
 
-        public async Task Iniciar(string RFC, string PathPFX, string Password)
+        public async Task Iniciar(string RFC, string PathPFX, string Password, int Ano, int Mes, int Dia)
         {
             Console.WriteLine("Iniciando");
             this.RFC = RFC.ToUpper();
             this.PathPFX = PathPFX;
             this.Password = Password;
+            this.Ano = Ano;
+            this.Mes = Mes;
+            this.Dia = Dia;
 
             mycookies = new CookieContainer();
             OnProcesamiento( EstadoProcesamiento.Inicio.ArgProcesamiento());
@@ -54,10 +63,12 @@ namespace satbot.poller
                     if (OKri)
                     {
                         Console.WriteLine($"--------------- Captcha");
+                        Task.Delay(500).Wait();
                         var (OKCaptcha, ErrorCaptcha) = FormaLoginCaptcha(Location);
                         if (OKCaptcha)
                         {
                             Console.WriteLine($"--------------- LoginFirma");
+                            Task.Delay(250).Wait();
                             var (OKFirma, UUIDFirma,  ErrorFirma) = FormaLoginFirma();
                             if (OKFirma)
                             {
@@ -70,6 +81,7 @@ namespace satbot.poller
                                 {
                                     Console.WriteLine($"--------------- Login valido");
                                     var(OKLogin, ErrLogin) = LoginValido(WResult);
+                                    Task.Delay(500).Wait();
                                     if (OKLogin)
                                     {
                                         Console.WriteLine($"--------------- PAgina inicial");
@@ -78,6 +90,10 @@ namespace satbot.poller
                                         {
                                             Console.WriteLine($"--------------- Encuesta");
                                             encuesta = await servicioRFC.ObtieneEncuesta();
+                                            encuesta.FechaInicio = new DateTime(Ano, Mes, Dia == 0 ? 1 : Dia);
+                                            encuesta.FechaFinal = new DateTime(Ano, Mes, DateTime.DaysInMonth(Ano, Mes));
+
+                                            Task.Delay(500).Wait();
                                             if (encuesta != null)
                                             {
                                                 await ProcesaEncuenta();
@@ -128,19 +144,22 @@ namespace satbot.poller
 
         private async Task ProcesaEncuenta()
         {
-            List<Task> tareas = new List<Task>();
-            await Task.Delay(0);
-            if (encuesta.Recibidos)
-            {
-                tareas.Add(ProcesaReceptor());
-            }
 
-            if (encuesta.Emitidos)
-            {
-                tareas.Add(ProcesaEmisor());
-            }
+            await ProcesaReceptor();
 
-            Task.WaitAll(tareas.ToArray());
+            //List<Task> tareas = new List<Task>();
+            //await Task.Delay(0);
+            //if (encuesta.Recibidos)
+            //{
+            //    tareas.Add(ProcesaReceptor());
+            //}
+
+            //if (encuesta.Emitidos)
+            //{
+            //    tareas.Add(ProcesaEmisor());
+            //}
+
+            //Task.WaitAll(tareas.ToArray());
 
         }
 

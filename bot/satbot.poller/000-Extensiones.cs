@@ -244,6 +244,26 @@ namespace satbot.poller
         }
 
 
+        public static string ObtieneViewStateInicialReceptor(this string html)
+        {
+            if (!string.IsNullOrEmpty(html))
+            {
+                int i = html.IndexOf("__VIEWSTATE|");
+                if (i >= 0)
+                {
+                    i = i + "__VIEWSTATE|".Length;
+                    int e = html.IndexOf("|", i );
+                    if (e >= 0)
+                    {
+                        string v = html.Substring(i, e - i);
+                        return v;
+                    }
+                }
+
+            }
+            return null;
+        }
+
         private static StringDictionary ObtieneValorInput(this string html, List<string> elementos)
         {
             StringDictionary d = new StringDictionary();
